@@ -30,8 +30,23 @@ const HUB = /github\.io$/.test(location.hostname) ? "../" : "../index.html";
    então nele as barras ficam sólidas, sem desfoque. */
 const FF_ANDROID = /Android/i.test(navigator.userAgent) && /Firefox\//.test(navigator.userAgent);
 if (FF_ANDROID) document.documentElement.classList.add("ff-android");
-const getScroll = () => window.scrollY;
-const setScroll = y => window.scrollTo(0, y);
+
+/* Nome do programa: vem do ../programs.json, pela pasta desta página. Sem ele, o nome da pasta com a primeira letra maiúscula */
+const FOLDER = (() => {
+  const f = location.pathname.replace(/[^/]*$/, "").split("/").filter(Boolean).pop() || "";
+  try { return decodeURIComponent(f); } catch (e) { return f; }
+})();
+let PROGRAM = FOLDER ? FOLDER.charAt(0).toUpperCase() + FOLDER.slice(1) : "Treinos";
+async function loadProgramName() {
+  try {
+    const r = await fetch("../programs.json", { cache: "no-cache" });
+    if (!r.ok) return;
+    const data = await r.json();
+    const p = (Array.isArray(data.programs) ? data.programs : [])
+      .find(p => p && typeof p.path === "string" && p.path.replace(/\/$/, "") === FOLDER);
+    if (p && typeof p.name === "string" && p.name.trim()) PROGRAM = p.name.trim();
+  } catch (e) { /* aberto direto do computador ou arquivo com erro: fica o nome da pasta */ }
+}
 
 /* Armazenamento local (só neste aparelho) */
 const store = {
@@ -196,7 +211,6 @@ function parseError(e, text) {
 }
 
 function fatal(errors, source) {
-  document.querySelector(".tabbar").hidden = true;
   detailView.hidden = true;
   listView.hidden = false;
   listView.innerHTML =
@@ -212,6 +226,7 @@ function fatal(errors, source) {
 }
 
 async function load() {
+  const nameReady = loadProgramName();
   let text = null, source = "treino.json";
   try {
     const r = await fetch("treino.json", { cache: "no-cache" });
@@ -233,7 +248,7 @@ async function load() {
   if (res.errors.length) { fatal(res.errors, source); return; }
   D = res.db;
   migrateV2();
-  buildTabbar();
+  await nameReady;
   window.addEventListener("hashchange", route);
   route();
 }
@@ -261,6 +276,7 @@ function migrateV2() {
    ============================================================ */
 const exIcon = ex => EQ_ICON[ex.equipment] || G.dumbbell;
 const workoutItems = wk => wk.before.filter(b => b.type === "warmup").concat(wk.items);
+const wkTitle = wk => "Treino " + wk.name;
 
 /* Observações do exercício + do item, juntando as do mesmo tipo numa caixa só */
 function mergeNotes(a, b) {
@@ -304,12 +320,39 @@ function beforeCell(b) {
     '<span class="chev">' + G.chev + '</span></a>';
 }
 
+/* Linha de um treino na tela inicial do programa, com o progresso de todas as séries (aquecimento incluído) */
+function workoutCell(wk) {
+  const its = workoutItems(wk);
+  const total = its.reduce((s, it) => s + it.sets, 0);
+  const done = its.reduce((s, it) => s + doneCount(it.id, it.sets), 0);
+  const full = total > 0 && done === total;
+  const letter = wk.name.length <= 2 ? wk.name : wk.name.charAt(0);
+  const sub = esc([wk.description, wk.day].filter(Boolean).join(" · "));
+  const prog = done > 0 && !full ? '<span class="prog">' + done + ' de ' + plural(total, "série", "séries") + '</span>' : '';
+  const line = sub && prog ? sub + ' · ' + prog : sub || prog;
+  return '<a class="cell" href="#' + wk.id + '">' +
+    '<span class="thumb"><span class="thumb-l">' + esc(letter) + '</span>' + (full ? '<span class="badge">' + G.check + '</span>' : '') + '</span>' +
+    '<span class="cell-main"><span class="cell-title">' + esc(wkTitle(wk)) + '</span>' + (line ? '<span class="cell-sub">' + line + '</span>' : '') + '</span>' +
+    '<span class="chev">' + G.chev + '</span></a>';
+}
+
+/* Tela inicial do programa: um treino por linha */
+function homeHTML() {
+  return (
+    nav(PROGRAM, HUB, "Treinos") +
+    '<div class="lt"><h1 class="large-title">' + esc(PROGRAM) + '</h1></div>' +
+    '<p class="g-head">' + plural(D.workouts.length, "treino", "treinos") + '</p>' +
+    '<div class="group">' + D.workouts.map(workoutCell).join("") + '</div>' +
+    '<p class="g-foot">Séries marcadas ficam salvas só neste aparelho.</p>'
+  );
+}
+
 function listHTML(wk) {
   const doneSets = workoutItems(wk).reduce((s, it) => s + doneCount(it.id, it.sets), 0);
-  const title = "Treino " + wk.name;
+  const title = wkTitle(wk);
   const sub = [wk.description, wk.day].filter(Boolean).join(" · ");
   return (
-    nav(title, HUB, "Treinos") +
+    nav(title, "#", PROGRAM) +
     '<div class="lt"><h1 class="large-title">' + esc(title) + '</h1>' + (sub ? '<p class="lt-sub">' + esc(sub) + '</p>' : '') + '</div>' +
     (wk.before.length ? '<p class="g-head">Antes de começar</p><div class="group">' + wk.before.map(beforeCell).join("") + '</div>' : '') +
     '<p class="g-head">' + plural(wk.items.length, "exercício", "exercícios") + '</p>' +
@@ -327,28 +370,6 @@ function notesHTML(notes) {
       (n.type === "shoulder" ? G.warn + "Cuidado com o ombro" : G.tip + "Dica") + '</div>' +
       (n.lines.length > 1 ? '<ul>' + n.lines.map(l => '<li>' + esc(l) + '</li>').join("") + '</ul>' : '<p>' + esc(n.lines[0]) + '</p>') +
     '</div>').join("") + '</div>';
-}
-
-function tabIcon(l) {
-  const fs = l.length > 1 ? 10 : 12.5;
-  return '<svg class="ti" viewBox="0 0 26 26" aria-hidden="true">' +
-    '<g class="line"><rect x="2.8" y="2.8" width="20.4" height="20.4" rx="5.8" fill="none" stroke="currentColor" stroke-width="1.7"/>' +
-      '<text x="13" y="13.6" text-anchor="middle" dominant-baseline="middle" font-size="' + fs + '" font-weight="600" fill="currentColor" font-family="-apple-system, BlinkMacSystemFont, Inter, sans-serif">' + esc(l) + '</text></g>' +
-    '<g class="fill"><rect x="1.9" y="1.9" width="22.2" height="22.2" rx="6.3" fill="currentColor"/>' +
-      '<text x="13" y="13.6" text-anchor="middle" dominant-baseline="middle" font-size="' + fs + '" font-weight="700" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, Inter, sans-serif">' + esc(l) + '</text></g>' +
-  '</svg>';
-}
-
-function buildTabbar() {
-  const bar = document.querySelector(".tabbar");
-  const inner = bar.querySelector(".tabbar-in");
-  inner.style.gridTemplateColumns = "repeat(" + D.workouts.length + ", 1fr)";
-  inner.innerHTML = D.workouts.map(wk => {
-    const l = wk.name.length <= 2 ? wk.name : wk.name.charAt(0);
-    const label = wk.name.length <= 3 ? "Treino " + wk.name : wk.name;
-    return '<button type="button" data-tab="' + wk.id + '" aria-selected="false">' + tabIcon(l) + '<span class="tl">' + esc(label) + '</span></button>';
-  }).join("");
-  bar.hidden = false;
 }
 
 function fallbackMedia(url, name) {
@@ -458,7 +479,7 @@ function detailHTML(ref, altId) {
     '<span class="jump-r"><span class="count">' + nOpts + '</span>' + G.down + '</span></button>' : '';
   const back = alt
     ? nav(ex.name, base, warm ? item.title : (main.name.length <= 16 ? main.name : "Voltar"))
-    : nav(ex.name, "#" + wk.id, "Treino " + wk.name);
+    : nav(ex.name, "#" + wk.id, wkTitle(wk));
   const sub = warm
     ? (alt ? item.title + " · alternativa para " + main.name : item.title + " · antes do treino")
     : (alt ? "Alternativa para " + main.name : main.muscle);
@@ -506,7 +527,7 @@ function guideHTML(g, wk) {
         g.avoid.map(t => '<div class="avoid">' + G.no + '<span>' + esc(t) + '</span></div>').join("") + '</div>'
     : "";
   return (
-    nav(g.title, "#" + wk.id, "Treino " + wk.name) +
+    nav(g.title, "#" + wk.id, wkTitle(wk)) +
     '<div class="lt"><h1 class="large-title t2">' + esc(g.title) + '</h1>' + (g.subtitle ? '<p class="lt-sub">' + esc(g.subtitle) + '</p>' : '') + '</div>' +
     scale + rules + avoid +
     '<div class="spacer"></div>'
@@ -519,8 +540,14 @@ function guideHTML(g, wk) {
 const listView = document.getElementById("list-view");
 const detailView = document.getElementById("detail-view");
 const sheet = document.getElementById("sheet");
-const listScroll = {};
-let currentList = null;
+/* Níveis: 0 = tela inicial do programa, 1 = treino, 2 = exercício, alternativa, aquecimento ou guia */
+const listScroll = {};   // rolagem guardada de cada lista: "home" e o id de cada treino
+let shown = null;       // tela aberta agora: "home", id do treino ou "detail"
+let depth = -1;
+let currentWk = null;    // treino da tela aberta (ou do último treino visto)
+const getScroll = () => window.scrollY;
+const setScroll = y => window.scrollTo(0, y);
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function activeView() { return detailView.hidden ? listView : detailView; }
 
@@ -532,10 +559,6 @@ function updateNav() {
   n.classList.toggle("scrolled", t.getBoundingClientRect().bottom < 50);
 }
 
-function setTab(id) {
-  document.querySelectorAll(".tabbar [data-tab]").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === id));
-}
-
 function show(view, push) {
   (view === listView ? detailView : listView).hidden = true;
   view.hidden = false;
@@ -543,41 +566,46 @@ function show(view, push) {
   if (push) { void view.offsetWidth; view.classList.add("push"); }
 }
 
-function openDetail(wk, html) {
-  if (!listView.hidden && currentList) listScroll[currentList] = getScroll();
-  setTab(wk.id);
-  currentList = wk.id;
-  detailView.innerHTML = html;
-  show(detailView, true);
-  setScroll(0);
+/* Mostra uma tela. Ao descer um nível começa do topo; ao voltar (ou redesenhar) uma lista, volta para onde estava */
+function render(view, key, level, html) {
+  const deeper = depth >= 0 && level > depth;
+  const y = key === "detail" || deeper ? 0 : (listScroll[key] || 0);
+  shown = key;
+  depth = level;
+  view.innerHTML = html;
+  show(view, deeper || key === "detail");
+  setScroll(y);
 }
 
 function route() {
   if (!D) return;
+  if (shown && shown !== "detail") listScroll[shown] = getScroll();
   const h = (location.hash || "").slice(1);
   const im = h.match(/^(it-[A-Za-z0-9]+)(?:-(ex-[A-Za-z0-9]+))?$/);
   const ref = im && D.itemById[im[1]];
   if (ref && (!im[2] || D.exById[ref.item.exercise].alternatives.includes(im[2]))) {
-    openDetail(ref.workout, detailHTML(ref, im[2] || null));
+    currentWk = ref.workout.id;
     detailView.dataset.item = ref.item.id;
+    render(detailView, "detail", 2, detailHTML(ref, im[2] || null));
     initCarousel();
   } else if (D.guideById[h]) {
-    const wk = D.wById[currentList] || D.workouts.find(w => w.before.some(b => b.guide === h)) || D.workouts[0];
-    openDetail(wk, guideHTML(D.guideById[h], wk));
+    /* Volta para o treino de onde veio; aberto direto pelo link, para o treino que tem o guia em "before" */
+    const cur = D.wById[currentWk];
+    const wk = cur && cur.before.some(b => b.guide === h) ? cur : D.workouts.find(w => w.before.some(b => b.guide === h)) || D.workouts[0];
+    currentWk = wk.id;
     delete detailView.dataset.item;
+    render(detailView, "detail", 2, guideHTML(D.guideById[h], wk));
+  } else if (D.wById[h]) {
+    currentWk = h;
+    render(listView, h, 1, listHTML(D.wById[h]));
   } else {
-    const wk = D.wById[h] || D.wById[currentList] || D.workouts[0];
-    currentList = wk.id;
-    setTab(wk.id);
-    listView.innerHTML = listHTML(wk);
-    show(listView, false);
-    setScroll(listScroll[wk.id] || 0);
+    render(listView, "home", 0, homeHTML());
   }
   updateNav();
 }
 
 function openSheet() {
-  document.getElementById("sheet-msg").textContent = "As séries marcadas do Treino " + D.wById[currentList].name + " serão desmarcadas.";
+  document.getElementById("sheet-msg").textContent = "As séries marcadas do " + wkTitle(D.wById[currentWk]) + " serão desmarcadas.";
   sheet.hidden = false;
   sheet.querySelector(".cancel").focus();
 }
@@ -585,14 +613,6 @@ function closeSheet() { sheet.hidden = true; }
 
 document.addEventListener("click", ev => {
   if (!D) return;
-  const tab = ev.target.closest("[data-tab]");
-  if (tab) {
-    const k = tab.dataset.tab;
-    if (!listView.hidden) listScroll[currentList] = getScroll();
-    if (k !== currentList || listView.hidden) listScroll[k] = listView.hidden && k === currentList ? listScroll[k] : 0;
-    if (location.hash === "#" + k) route(); else location.hash = k;
-    return;
-  }
   const setBtn = ev.target.closest("[data-set]");
   if (setBtn && detailView.dataset.item) {
     const id = detailView.dataset.item, k = +setBtn.dataset.set;
@@ -616,7 +636,7 @@ document.addEventListener("click", ev => {
   const s = ev.target.closest("[data-sheet]");
   if (s) {
     if (s.dataset.sheet === "confirm") {
-      workoutItems(D.wById[currentList]).forEach(it => store.del(sk(it.id)));
+      workoutItems(D.wById[currentWk]).forEach(it => store.del(sk(it.id)));
       closeSheet();
       route();
     } else closeSheet();
