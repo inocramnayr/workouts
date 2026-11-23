@@ -22,7 +22,8 @@ const G = {
 const EQ = { machine: "Máquina", dumbbell: "Halteres", cable: "Polia", smith: "Smith", band: "Elástico", bodyweight: "Peso do corpo" };
 const EQ_ICON = { machine: G.machine, dumbbell: G.dumbbell, cable: G.cable, smith: G.smith, band: G.band, bodyweight: G.body };
 const BEFORE_ICON = { warning: G.warnLine, flame: G.flame, tip: G.tip };
-const NOTE_TYPES = ["shoulder", "tip"];
+const NOTE_TYPES = ["shoulder", "knee", "tip"];
+const WARN_TITLE = { shoulder: "Cuidado com o ombro", knee: "Cuidado com o joelho" };
 /* Página inicial com a lista de programas (uma pasta acima). No GitHub Pages o link fica sem "index.html" */
 const HUB = /github\.io$/.test(location.hostname) ? "../" : "../index.html";
 
@@ -368,8 +369,8 @@ function listHTML(wk) {
 function notesHTML(notes) {
   if (!notes.length) return "";
   return '<div class="spacer"></div><div class="group">' + notes.map(n =>
-    '<div class="note ' + (n.type === "shoulder" ? "ombro" : "dica") + '"><div class="note-h">' +
-      (n.type === "shoulder" ? G.warn + "Cuidado com o ombro" : G.tip + "Dica") + '</div>' +
+    '<div class="note ' + (WARN_TITLE[n.type] ? "ombro" : "dica") + '"><div class="note-h">' +
+      (WARN_TITLE[n.type] ? G.warn + WARN_TITLE[n.type] : G.tip + "Dica") + '</div>' +
       (n.lines.length > 1 ? '<ul>' + n.lines.map(l => '<li>' + esc(l) + '</li>').join("") + '</ul>' : '<p>' + esc(n.lines[0]) + '</p>') +
     '</div>').join("") + '</div>';
 }

@@ -1,0 +1,485 @@
+{
+  "version": 1,
+  "workouts": [
+    {
+      "id": "tr-be678e69",
+      "name": "A",
+      "description": "Peito, ombro e tríceps",
+      "day": "Segunda",
+      "items": [
+        { "id": "it-6e0f1e67", "exercise": "ex-e0d0d289", "sets": 4, "reps": "6–10" },
+        { "id": "it-0f024edf", "exercise": "ex-6afe334e", "sets": 3, "reps": "8–12" },
+        { "id": "it-8e90f6e6", "exercise": "ex-bf6ebb7d", "sets": 3, "reps": "8–12" },
+        { "id": "it-b779363a", "exercise": "ex-d632ecb3", "sets": 3, "reps": "12–15" },
+        { "id": "it-50f9e19d", "exercise": "ex-f4d48b09", "sets": 3, "reps": "10–15" },
+        { "id": "it-f5aedd17", "exercise": "ex-6149bd6f", "sets": 3, "reps": "10–12" }
+      ]
+    },
+    {
+      "id": "tr-56a2715a",
+      "name": "B",
+      "description": "Costas e bíceps",
+      "day": "Quarta",
+      "items": [
+        { "id": "it-0a87af2a", "exercise": "ex-77c3c603", "sets": 4, "reps": "8–12" },
+        { "id": "it-44a2ca74", "exercise": "ex-18fbdbc1", "sets": 3, "reps": "8–12" },
+        { "id": "it-c7498eea", "exercise": "ex-edbb0d33", "sets": 3, "reps": "8–12", "per": "por braço" },
+        { "id": "it-83b461dc", "exercise": "ex-c1f09296", "sets": 3, "reps": "8–12" },
+        { "id": "it-5e8cca46", "exercise": "ex-0ed171d4", "sets": 3, "reps": "10–12" },
+        { "id": "it-0cfcf197", "exercise": "ex-af903bc6", "sets": 3, "reps": "12–15" }
+      ]
+    },
+    {
+      "id": "tr-38da250c",
+      "name": "C",
+      "description": "Pernas",
+      "day": "Sexta",
+      "items": [
+        { "id": "it-a3ef6a18", "exercise": "ex-d7ae5009", "sets": 4, "reps": "10–12" },
+        { "id": "it-043c5db8", "exercise": "ex-bbda9b0a", "sets": 3, "reps": "8–12" },
+        { "id": "it-ccb6d640", "exercise": "ex-58fc2e1c", "sets": 3, "reps": "12–15" },
+        { "id": "it-360638fa", "exercise": "ex-5f9f4daa", "sets": 3, "reps": "10–12" },
+        { "id": "it-ac294f86", "exercise": "ex-dc1f97d6", "sets": 4, "reps": "10–15" },
+        { "id": "it-153e9e8f", "exercise": "ex-31601cfa", "sets": 3, "reps": "10–15" }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex-e0d0d289",
+      "name": "Supino reto com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Peito",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-bench-press",
+      "videos": [],
+      "alternatives": ["ex-8a7d68ac", "ex-e482ebff"]
+    },
+    {
+      "id": "ex-8a7d68ac",
+      "name": "Supino na máquina",
+      "equipment": "machine",
+      "muscle": "Peito",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-chest-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-e482ebff",
+      "name": "Supino no Smith",
+      "equipment": "smith",
+      "muscle": "Peito",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-bench-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-6afe334e",
+      "name": "Supino inclinado com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Peito (parte de cima)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-incline-bench-press",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Banco em uns 30 graus."] }],
+      "alternatives": ["ex-f003999f", "ex-d1f4fa7d"]
+    },
+    {
+      "id": "ex-f003999f",
+      "name": "Supino inclinado na máquina",
+      "equipment": "machine",
+      "muscle": "Peito (parte de cima)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-plate-loaded-incline-chest-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-d1f4fa7d",
+      "name": "Supino inclinado no Smith",
+      "equipment": "smith",
+      "muscle": "Peito (parte de cima)",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-incline-bench-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-bf6ebb7d",
+      "name": "Desenvolvimento com halteres sentado",
+      "equipment": "dumbbell",
+      "muscle": "Ombro (frente)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-seated-overhead-press",
+      "videos": [],
+      "alternatives": ["ex-5b778514", "ex-835fa566"]
+    },
+    {
+      "id": "ex-5b778514",
+      "name": "Desenvolvimento na máquina",
+      "equipment": "machine",
+      "muscle": "Ombro (frente)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-overhand-overhead-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-835fa566",
+      "name": "Desenvolvimento no Smith",
+      "equipment": "smith",
+      "muscle": "Ombro (frente)",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-seated-overhead-press",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-d632ecb3",
+      "name": "Elevação lateral com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Ombro (lateral)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-lateral-raise",
+      "videos": [],
+      "alternatives": ["ex-bee9c8de", "ex-0aab6054"]
+    },
+    {
+      "id": "ex-bee9c8de",
+      "name": "Elevação lateral na polia",
+      "equipment": "cable",
+      "muscle": "Ombro (lateral)",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-low-single-arm-lateral-raise",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-0aab6054",
+      "name": "Elevação lateral na máquina",
+      "equipment": "machine",
+      "muscle": "Ombro (lateral)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-standing-lateral-raise",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-f4d48b09",
+      "name": "Tríceps na polia com corda",
+      "equipment": "cable",
+      "muscle": "Tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-rope-pushdown",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Cotovelos colados ao corpo."] }],
+      "alternatives": ["ex-be32773f", "ex-e19794e1"]
+    },
+    {
+      "id": "ex-be32773f",
+      "name": "Tríceps na polia com barra",
+      "equipment": "cable",
+      "muscle": "Tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-bar-pushdown",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-e19794e1",
+      "name": "Mergulho no banco",
+      "equipment": "bodyweight",
+      "muscle": "Tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/bench-dips",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Peso do corpo: vá até perto do limite."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-6149bd6f",
+      "name": "Tríceps francês com halter",
+      "equipment": "dumbbell",
+      "muscle": "Tríceps (cabeça longa)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-seated-overhead-tricep-extension",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Cotovelos apontados para cima, perto da cabeça."] }],
+      "alternatives": ["ex-c0c0f82c"]
+    },
+    {
+      "id": "ex-c0c0f82c",
+      "name": "Tríceps francês na polia com corda",
+      "equipment": "cable",
+      "muscle": "Tríceps (cabeça longa)",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-rope-overhead-tricep-extension",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-77c3c603",
+      "name": "Puxada frontal",
+      "equipment": "machine",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-pulldown",
+      "videos": [],
+      "alternatives": ["ex-a3df610f"]
+    },
+    {
+      "id": "ex-a3df610f",
+      "name": "Puxada na máquina articulada",
+      "equipment": "machine",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-plate-loaded-pulldown",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-18fbdbc1",
+      "name": "Remada sentada na polia",
+      "equipment": "cable",
+      "muscle": "Costas (meio)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-seated-cable-row",
+      "videos": [],
+      "alternatives": ["ex-9904b6e2"]
+    },
+    {
+      "id": "ex-9904b6e2",
+      "name": "Remada na máquina",
+      "equipment": "machine",
+      "muscle": "Costas (meio)",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-plate-loaded-row",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-edbb0d33",
+      "name": "Remada unilateral com halter",
+      "equipment": "dumbbell",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-single-arm-row",
+      "videos": [],
+      "alternatives": ["ex-2a35925f"]
+    },
+    {
+      "id": "ex-2a35925f",
+      "name": "Remada unilateral na polia",
+      "equipment": "cable",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-single-arm-neutral-grip-row",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-c1f09296",
+      "name": "Rosca direta com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Bíceps",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-curl",
+      "videos": [],
+      "alternatives": ["ex-942964a6", "ex-89234e5e"]
+    },
+    {
+      "id": "ex-942964a6",
+      "name": "Rosca na polia com barra",
+      "equipment": "cable",
+      "muscle": "Bíceps",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-bar-curl",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-89234e5e",
+      "name": "Rosca na máquina",
+      "equipment": "machine",
+      "muscle": "Bíceps",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-bicep-curl",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-0ed171d4",
+      "name": "Rosca martelo com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Bíceps e antebraço",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-hammer-curl",
+      "videos": [],
+      "alternatives": ["ex-eb5a1905"]
+    },
+    {
+      "id": "ex-eb5a1905",
+      "name": "Rosca martelo na polia com corda",
+      "equipment": "cable",
+      "muscle": "Bíceps e antebraço",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-rope-hammer-curl",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-af903bc6",
+      "name": "Abdominal na polia",
+      "equipment": "cable",
+      "muscle": "Abdômen",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-rope-kneeling-crunch",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Quem dobra é a coluna; o quadril fica parado."] }],
+      "alternatives": ["ex-0aa9fbfe"]
+    },
+    {
+      "id": "ex-0aa9fbfe",
+      "name": "Abdominal na máquina",
+      "equipment": "machine",
+      "muscle": "Abdômen",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-crunch",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-d7ae5009",
+      "name": "Leg press 45°",
+      "equipment": "machine",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-leg-press",
+      "videos": [],
+      "notes": [
+        {
+          "type": "knee",
+          "lines": [
+            "Desça só até onde o joelho não incomodar, sem tirar o quadril do banco.",
+            "Não trave os joelhos no alto."
+          ]
+        }
+      ],
+      "alternatives": ["ex-a8989be4", "ex-f41c6c40"]
+    },
+    {
+      "id": "ex-a8989be4",
+      "name": "Agachamento goblet",
+      "equipment": "dumbbell",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-goblet-squat",
+      "videos": [],
+      "notes": [{ "type": "knee", "lines": ["Joelhos na direção dos pés; desça até onde for confortável."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-f41c6c40",
+      "name": "Agachamento no hack",
+      "equipment": "machine",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hack-squat",
+      "videos": [],
+      "notes": [{ "type": "knee", "lines": ["Mais pesado para o joelho. Use só se não sentir nada."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-bbda9b0a",
+      "name": "Stiff com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-romanian-deadlift",
+      "videos": [],
+      "notes": [
+        {
+          "type": "tip",
+          "lines": ["Joelhos levemente dobrados e coluna reta. Desça até sentir alongar atrás da coxa."]
+        }
+      ],
+      "alternatives": ["ex-916e7b19", "ex-0986e187"]
+    },
+    {
+      "id": "ex-916e7b19",
+      "name": "Stiff no Smith",
+      "equipment": "smith",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-romanian-deadlift",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-0986e187",
+      "name": "Stiff na polia",
+      "equipment": "cable",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-bar-romanian-deadlift",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-58fc2e1c",
+      "name": "Cadeira extensora",
+      "equipment": "machine",
+      "muscle": "Quadríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-leg-extension",
+      "videos": [],
+      "notes": [
+        {
+          "type": "knee",
+          "lines": ["Carga moderada, sem tranco. Se o joelho incomodar, diminua a amplitude ou pule o exercício."]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-5f9f4daa",
+      "name": "Cadeira flexora",
+      "equipment": "machine",
+      "muscle": "Posterior de coxa",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-seated-leg-curl",
+      "videos": [],
+      "alternatives": ["ex-e93949d3"]
+    },
+    {
+      "id": "ex-e93949d3",
+      "name": "Mesa flexora",
+      "equipment": "machine",
+      "muscle": "Posterior de coxa",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hamstring-curl",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-dc1f97d6",
+      "name": "Panturrilha em pé na máquina",
+      "equipment": "machine",
+      "muscle": "Panturrilha",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-standing-calf-raises",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Desça o calcanhar até alongar bem e segure 1 segundo no alto."] }],
+      "alternatives": ["ex-27e60927", "ex-f94a0abe", "ex-092789e0"]
+    },
+    {
+      "id": "ex-27e60927",
+      "name": "Panturrilha sentado na máquina",
+      "equipment": "machine",
+      "muscle": "Panturrilha",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-seated-calf-raises",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-f94a0abe",
+      "name": "Panturrilha no leg press horizontal",
+      "equipment": "machine",
+      "muscle": "Panturrilha",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-horizontal-leg-press-calf-raise",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-092789e0",
+      "name": "Panturrilha com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Panturrilha",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-calf-raise",
+      "videos": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-31601cfa",
+      "name": "Elevação de joelhos na barra",
+      "equipment": "bodyweight",
+      "muscle": "Abdômen (parte de baixo)",
+      "url": "https://musclewiki.com/pt-br/exercise/hanging-knee-raises",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Suba devagar, sem balançar."] }],
+      "alternatives": ["ex-acc2a5ad"]
+    },
+    {
+      "id": "ex-acc2a5ad",
+      "name": "Elevação de pernas deitado",
+      "equipment": "bodyweight",
+      "muscle": "Abdômen (parte de baixo)",
+      "url": "https://musclewiki.com/pt-br/exercise/laying-leg-raises",
+      "videos": [],
+      "alternatives": []
+    }
+  ],
+  "guides": []
+}
