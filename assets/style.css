@@ -400,3 +400,11 @@ a.video-media { display: grid; }
 .cell.off .cell-title { color: var(--secondary); }
 .cell.off .chev { visibility: hidden; }
 body.hub { padding-bottom: calc(32px + env(safe-area-inset-bottom)); }
+
+/* Firefox no Android (classe posta pelo script): rolagem dentro do body e barras sem desfoque */
+html.ff-android { --bar: #F9F9F9; height: 100%; overflow: hidden; }
+html.ff-android body { height: 100%; box-sizing: border-box; overflow-y: auto; }
+html.ff-android .nav.scrolled,
+html.ff-android .tabbar,
+html.ff-android .sheet-group { backdrop-filter: none; -webkit-backdrop-filter: none; }
+html.ff-android .sheet-group { background: #FFFFFF; }

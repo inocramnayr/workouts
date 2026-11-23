@@ -26,6 +26,15 @@ const NOTE_TYPES = ["shoulder", "tip"];
 /* Página inicial com a lista de programas (uma pasta acima). No GitHub Pages o link fica sem "index.html" */
 const HUB = /github\.io$/.test(location.hostname) ? "../" : "../index.html";
 
+/* Firefox no Android: a barra de endereço que some ao rolar faz a barra de abas pular, e o desfoque
+   deixa a rolagem travada (bugs conhecidos do Firefox). Nele a página rola dentro do body, então a
+   barra de endereço fica parada, e as barras ficam sólidas, sem desfoque. */
+const FF_ANDROID = /Android/i.test(navigator.userAgent) && /Firefox\//.test(navigator.userAgent);
+if (FF_ANDROID) document.documentElement.classList.add("ff-android");
+const scroller = FF_ANDROID ? document.body : null;
+const getScroll = () => scroller ? scroller.scrollTop : window.scrollY;
+const setScroll = y => { if (scroller) scroller.scrollTop = y; else window.scrollTo(0, y); };
+
 /* Armazenamento local (só neste aparelho) */
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -537,12 +546,12 @@ function show(view, push) {
 }
 
 function openDetail(wk, html) {
-  if (!listView.hidden && currentList) listScroll[currentList] = window.scrollY;
+  if (!listView.hidden && currentList) listScroll[currentList] = getScroll();
   setTab(wk.id);
   currentList = wk.id;
   detailView.innerHTML = html;
   show(detailView, true);
-  window.scrollTo(0, 0);
+  setScroll(0);
 }
 
 function route() {
@@ -564,7 +573,7 @@ function route() {
     setTab(wk.id);
     listView.innerHTML = listHTML(wk);
     show(listView, false);
-    window.scrollTo(0, listScroll[wk.id] || 0);
+    setScroll(listScroll[wk.id] || 0);
   }
   updateNav();
 }
@@ -581,7 +590,7 @@ document.addEventListener("click", ev => {
   const tab = ev.target.closest("[data-tab]");
   if (tab) {
     const k = tab.dataset.tab;
-    if (!listView.hidden) listScroll[currentList] = window.scrollY;
+    if (!listView.hidden) listScroll[currentList] = getScroll();
     if (k !== currentList || listView.hidden) listScroll[k] = listView.hidden && k === currentList ? listScroll[k] : 0;
     if (location.hash === "#" + k) route(); else location.hash = k;
     return;
@@ -616,5 +625,8 @@ document.addEventListener("click", ev => {
   }
 });
 document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !sheet.hidden) closeSheet(); });
-window.addEventListener("scroll", updateNav, { passive: true });
+let navFrame = 0;
+(scroller || window).addEventListener("scroll", () => {
+  if (!navFrame) navFrame = requestAnimationFrame(() => { navFrame = 0; updateNav(); });
+}, { passive: true });
 load();
