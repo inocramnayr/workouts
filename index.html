@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Treinos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="hub">
+<div class="app">
+  <section class="view" id="hub" aria-label="Programas de treino"></section>
+</div>
+
+<!-- Cópia da lista de programas, usada só quando a página é aberta direto do computador -->
+<script type="application/json" id="programs-data">
+{
+  "version": 1,
+  "programs": [
+    { "id": "pr-86710d87", "name": "Blue", "path": "blue/", "color": "blue" },
+    { "id": "pr-181639b2", "name": "Green", "path": "green/", "color": "green" }
+  ]
+}
+</script>
+<script>
+/* Página inicial: lista os programas do programs.json. Cada programa é uma pasta com index.html e treino.json */
+const CHEV = '<svg viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 6.5 7l-5 5.5"/></svg>';
+const WARN = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.15" fill="#fff"/></svg>';
+const COLORS = ["blue", "green", "orange", "red", "purple", "teal", "indigo", "pink"];
+const CLEAN = /github\.io$/.test(location.hostname);   // no GitHub Pages o link fica sem "index.html"
+const hub = document.getElementById("hub");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function nav(title) { return '<header class="nav"><span></span><span class="nav-title">' + esc(title) + '</span><span></span></header>'; }
+
+function fail(errors) {
+  hub.innerHTML = nav("Erro no programs.json") +
+    '<div class="lt"><h1 class="large-title t2">Erro no programs.json</h1><p class="lt-sub">Corrija o arquivo e recarregue a página.</p></div>' +
+    '<div class="spacer"></div><div class="group">' + errors.map(m => '<div class="err-row">' + WARN + '<span>' + esc(m) + '</span></div>').join("") + '</div>';
+}
+
+/* Texto do arquivo; null = não existe (404); undefined = não deu para conferir (aberto direto do computador) */
+async function getText(url) {
+  try { const r = await fetch(url, { cache: "no-cache" }); return r.ok ? await r.text() : null; }
+  catch (e) { return undefined; }
+}
+
+function check(data) {
+  const errors = [], seen = {};
+  if (!data || typeof data !== "object" || !Array.isArray(data.programs)) return { errors: ['Falta a lista "programs".'] };
+  const list = data.programs.map((p, k) => {
+    const where = "Programa " + (k + 1) + (p && p.name ? " (" + p.name + ")" : "");
+    if (!p || typeof p !== "object") { errors.push(where + ": precisa ser um objeto."); return null; }
+    if (typeof p.id !== "string" || !/^pr-[A-Za-z0-9]+$/.test(p.id)) errors.push(where + ': o "id" precisa começar com "pr-" seguido de letras ou números.');
+    else if (seen[p.id]) errors.push('O id "' + p.id + '" está repetido.');
+    else seen[p.id] = true;
+    if (typeof p.name !== "string" || !p.name.trim()) errors.push(where + ': falta "name".');
+    if (typeof p.path !== "string" || !/^[A-Za-z0-9_-]+\/?$/.test(p.path)) { errors.push(where + ': "path" precisa ser o nome de uma pasta, como "blue/".'); return null; }
+    if (p.color !== undefined && !COLORS.includes(p.color)) console.warn(where + ': cor "' + p.color + '" desconhecida. Use: ' + COLORS.join(", ") + ".");
+    return { name: p.name || "", path: p.path.replace(/\/?$/, "/"), color: COLORS.includes(p.color) ? p.color : "blue",
+             description: typeof p.description === "string" ? p.description : "" };
+  }).filter(Boolean);
+  if (!list.length && !errors.length) errors.push('A lista "programs" está vazia.');
+  return { errors, list };
+}
+
+/* Resumo tirado do treino.json do programa: "3 treinos · Segunda, Quarta e Sexta" */
+function summary(text) {
+  try {
+    const w = JSON.parse(text).workouts || [];
+    const days = w.map(x => x.day).filter(Boolean);
+    const joined = days.length > 1 ? days.slice(0, -1).join(", ") + " e " + days[days.length - 1] : days.join("");
+    return (w.length === 1 ? "1 treino" : w.length + " treinos") + (joined ? " · " + joined : "");
+  } catch (e) { return "Erro no treino.json"; }
+}
+
+function cell(p, i) {
+  return '<a class="cell" id="p' + i + '" href="' + esc(CLEAN ? p.path : p.path + "index.html") + '">' +
+    '<span class="thumb ' + p.color + '"><span class="thumb-l">' + esc(p.name.charAt(0).toUpperCase()) + '</span></span>' +
+    '<span class="cell-main"><span class="cell-title">' + esc(p.name) + '</span>' +
+      '<span class="cell-sub">' + esc(p.description || " ") + '</span></span>' +
+    '<span class="chev">' + CHEV + '</span></a>';
+}
+
+async function load() {
+  let text = await getText("programs.json");
+  if (typeof text !== "string") text = document.getElementById("programs-data").textContent;
+  let data;
+  try { data = JSON.parse(text); } catch (e) { fail(["O arquivo não é um JSON válido. Detalhe: " + e.message]); return; }
+  const res = check(data);
+  if (res.errors.length) { fail(res.errors); return; }
+  hub.innerHTML = nav("Treinos") +
+    '<div class="lt"><h1 class="large-title">Treinos</h1></div>' +
+    '<div class="spacer"></div><div class="group">' + res.list.map(cell).join("") + '</div>' +
+    '<p class="g-foot">As séries marcadas ficam salvas só neste aparelho.</p>';
+  res.list.forEach(async (p, i) => {
+    const t = await getText(p.path + "treino.json");
+    const el = document.getElementById("p" + i);
+    if (!el) return;
+    if (t === null) {                       // pasta ainda sem treino
+      el.classList.add("off");
+      el.removeAttribute("href");
+      el.setAttribute("aria-disabled", "true");
+      el.querySelector(".cell-sub").textContent = "Em breve";
+    } else if (typeof t === "string" && !p.description) {
+      el.querySelector(".cell-sub").textContent = summary(t);
+    }
+  });
+}
+
+function updateNav() {
+  const n = hub.querySelector(".nav"), t = hub.querySelector(".large-title");
+  if (n && t) n.classList.toggle("scrolled", t.getBoundingClientRect().bottom < 50);
+}
+window.addEventListener("scroll", updateNav, { passive: true });
+load();
+</script>
+</body>
+</html>

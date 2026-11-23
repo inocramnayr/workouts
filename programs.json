@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "programs": [
+    { "id": "pr-86710d87", "name": "Blue", "path": "blue/", "color": "blue" },
+    { "id": "pr-181639b2", "name": "Green", "path": "green/", "color": "green" }
+  ]
+}

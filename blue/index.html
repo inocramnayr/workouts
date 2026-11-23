@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Blue · Treinos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="app">
+  <section class="view" id="list-view" aria-label="Lista de exercícios"></section>
+  <section class="view" id="detail-view" hidden></section>
+</div>
+
+<nav class="tabbar" aria-label="Treinos" hidden>
+  <div class="tabbar-in"></div>
+</nav>
+
+<div class="sheet-wrap" id="sheet" hidden>
+  <div class="dim" data-sheet="cancel"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-msg">
+    <div class="sheet-group">
+      <div class="sheet-msg" id="sheet-msg">As séries marcadas deste treino serão desmarcadas.</div>
+      <button type="button" class="destructive" data-sheet="confirm">Zerar séries</button>
+    </div>
+    <div class="sheet-group"><button type="button" class="cancel" data-sheet="cancel">Cancelar</button></div>
+  </div>
+</div>
+
+<!-- Cópia do treino.json, usada só quando a página é aberta direto do computador. No GitHub Pages vale o treino.json. -->
+<script type="application/json" id="treino-data">
+{
+  "version": 1,
+  "workouts": [
+    {
+      "id": "tr-238f1217",
+      "name": "A",
+      "description": "Quadríceps e glúteo",
+      "day": "Segunda",
+      "before": [],
+      "items": [
+        { "id": "it-8b16317f", "exercise": "ex-ce0ca4e6", "sets": 4, "reps": "8–12" },
+        { "id": "it-b12ed6ee", "exercise": "ex-d8b1a777", "sets": 3, "reps": "8–12", "per": "por perna" },
+        { "id": "it-e58423e7", "exercise": "ex-7d11df81", "sets": 3, "reps": "10–15" },
+        { "id": "it-6f840825", "exercise": "ex-c8b64302", "sets": 3, "reps": "12–20" },
+        {
+          "id": "it-67d3d025",
+          "exercise": "ex-ddb3c961",
+          "sets": 2,
+          "reps": "12–15",
+          "per": "por braço",
+          "notes": [{ "type": "shoulder", "lines": ["Carga que deixe 2 ou 3 repetições sobrando, nunca até a falha."] }]
+        }
+      ]
+    },
+    {
+      "id": "tr-0d19125b",
+      "name": "B",
+      "description": "Costas, peito, ombro e tríceps",
+      "day": "Quarta",
+      "before": [
+        {
+          "type": "guide",
+          "guide": "gui-c02ee1a7",
+          "title": "Cuidados com o ombro",
+          "subtitle": "Escala de dor e o que não fazer",
+          "icon": "warning"
+        },
+        {
+          "type": "warmup",
+          "id": "it-c580213f",
+          "exercise": "ex-ddb3c961",
+          "sets": 1,
+          "reps": "15",
+          "per": "por braço",
+          "title": "Aquecimento",
+          "subtitle": "1 série leve de 15 da rotação externa",
+          "icon": "flame",
+          "notes": [
+            { "type": "shoulder", "lines": ["Carga bem leve, mais leve que a das séries do fim do treino."] },
+            {
+              "type": "tip",
+              "lines": ["Serve para aquecer e testar o ombro. Se já doer aqui, alivie a carga no resto do treino."]
+            }
+          ]
+        }
+      ],
+      "items": [
+        { "id": "it-8857699f", "exercise": "ex-00a09376", "sets": 3, "reps": "10–12" },
+        { "id": "it-e55b4aef", "exercise": "ex-94755da4", "sets": 3, "reps": "10–12" },
+        { "id": "it-eba8f68e", "exercise": "ex-7eacf5a6", "sets": 3, "reps": "10–12" },
+        { "id": "it-90098516", "exercise": "ex-6e447f7b", "sets": 3, "reps": "12–15" },
+        { "id": "it-a2ae2f80", "exercise": "ex-787a17e8", "sets": 3, "reps": "12–15" },
+        { "id": "it-3a80a76c", "exercise": "ex-9f6f905f", "sets": 3, "reps": "10–15" },
+        {
+          "id": "it-ae5a51ed",
+          "exercise": "ex-ddb3c961",
+          "sets": 3,
+          "reps": "12–15",
+          "per": "por braço",
+          "notes": [
+            {
+              "type": "shoulder",
+              "lines": [
+                "Carga que deixe 2 ou 3 repetições sobrando, nunca até a falha.",
+                "Aumente a carga aos poucos quando ficar fácil."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tr-b28763be",
+      "name": "C",
+      "description": "Glúteo e posterior de coxa",
+      "day": "Sexta",
+      "before": [],
+      "items": [
+        { "id": "it-be53e020", "exercise": "ex-b469a3c1", "sets": 4, "reps": "8–12" },
+        { "id": "it-570a5dcf", "exercise": "ex-a6a56bdd", "sets": 3, "reps": "8–12" },
+        { "id": "it-2648daba", "exercise": "ex-ce4f4128", "sets": 3, "reps": "10–12" },
+        { "id": "it-69bed78e", "exercise": "ex-124629e0", "sets": 3, "reps": "12–15", "per": "por perna" },
+        {
+          "id": "it-0662c278",
+          "exercise": "ex-ddb3c961",
+          "sets": 2,
+          "reps": "12–15",
+          "per": "por braço",
+          "notes": [{ "type": "shoulder", "lines": ["Carga que deixe 2 ou 3 repetições sobrando, nunca até a falha."] }]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex-ce0ca4e6",
+      "name": "Leg press 45°",
+      "equipment": "machine",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-leg-press?model=f",
+      "videos": [],
+      "notes": [{ "type": "shoulder", "lines": ["Se a almofada do hack apertar o ombro, fique no leg press ou no goblet."] }],
+      "alternatives": ["ex-74cdc860", "ex-9d21c96b"]
+    },
+    {
+      "id": "ex-74cdc860",
+      "name": "Agachamento no hack",
+      "equipment": "machine",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hack-squat?model=f",
+      "videos": [],
+      "notes": [{ "type": "shoulder", "lines": ["Se a almofada apertar o ombro, troque pelo leg press ou pelo goblet."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-9d21c96b",
+      "name": "Agachamento goblet",
+      "equipment": "dumbbell",
+      "muscle": "Quadríceps e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-goblet-squat?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Segure o halter junto ao peito, com os cotovelos apontando pra baixo."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-d8b1a777",
+      "name": "Agachamento búlgaro com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Glúteo e quadríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-bulgarian-split-squat?model=f",
+      "videos": [],
+      "notes": [
+        { "type": "tip", "lines": ["Tronco um pouco inclinado pra frente pega mais glúteo."] },
+        { "type": "shoulder", "lines": ["Halteres soltos ao lado do corpo, sem encolher os ombros."] }
+      ],
+      "alternatives": ["ex-b3398f7c", "ex-cd3cf813"]
+    },
+    {
+      "id": "ex-b3398f7c",
+      "name": "Búlgaro sem peso",
+      "equipment": "bodyweight",
+      "muscle": "Glúteo e quadríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/bulgarian-split-squat?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Tronco um pouco inclinado pra frente pega mais glúteo."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-cd3cf813",
+      "name": "Avanço para trás com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Glúteo e quadríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-reverse-lunge?model=f",
+      "videos": [],
+      "notes": [
+        { "type": "tip", "lines": ["Dê um passo longo pra trás e desça até o joelho de trás quase tocar o chão."] },
+        { "type": "shoulder", "lines": ["Halteres soltos ao lado do corpo, sem encolher os ombros."] }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-7d11df81",
+      "name": "Cadeira extensora",
+      "equipment": "machine",
+      "muscle": "Quadríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-leg-extension?model=f",
+      "videos": [],
+      "notes": [],
+      "alternatives": []
+    },
+    {
+      "id": "ex-c8b64302",
+      "name": "Cadeira abdutora",
+      "equipment": "machine",
+      "muscle": "Glúteo médio",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hip-abduction?model=f",
+      "videos": [],
+      "notes": [],
+      "alternatives": ["ex-b0b4805e", "ex-0dc9a780"]
+    },
+    {
+      "id": "ex-b0b4805e",
+      "name": "Abdução na polia",
+      "equipment": "cable",
+      "muscle": "Glúteo médio",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-standing-hip-abduction?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Tronco reto e movimento controlado, sem balançar o corpo."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-0dc9a780",
+      "name": "Caminhada lateral com elástico",
+      "equipment": "band",
+      "muscle": "Glúteo médio",
+      "url": "https://musclewiki.com/pt-br/exercise/side-walks-resisted?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Joelhos levemente dobrados e o elástico sempre esticado."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-ddb3c961",
+      "name": "Rotação externa na polia",
+      "equipment": "cable",
+      "muscle": "Manguito rotador",
+      "url": "https://musclewiki.com/pt-br/exercise/rotator-cuff-external-rotations-1?model=f",
+      "videos": [],
+      "notes": [{ "type": "shoulder", "lines": ["Cotovelo encostado na lateral do corpo."] }],
+      "alternatives": ["ex-656965f2"]
+    },
+    {
+      "id": "ex-656965f2",
+      "name": "Rotação externa com elástico",
+      "equipment": "band",
+      "muscle": "Manguito rotador",
+      "url": "https://musclewiki.com/pt-br/exercise/mini-band-external-rotation?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": ["Cotovelo encostado na lateral do corpo.", "Prenda o elástico na altura do cotovelo."]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-00a09376",
+      "name": "Puxada frontal com triângulo",
+      "equipment": "cable",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/neutral-pulldown?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Só faça se levantar o braço acima da cabeça não doer. Se doer, troque pela remada unilateral.",
+            "Puxe até a parte de cima do peito, nunca atrás da nuca.",
+            "Lá em cima, não estique o braço 100% nem deixe o ombro subir junto."
+          ]
+        }
+      ],
+      "alternatives": ["ex-54fcc684", "ex-09681013"]
+    },
+    {
+      "id": "ex-54fcc684",
+      "name": "Puxada com barra supinada",
+      "equipment": "cable",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/underhand-pulldown?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Só faça se levantar o braço acima da cabeça não doer. Se doer, troque pela remada unilateral.",
+            "Puxe até a parte de cima do peito, nunca atrás da nuca.",
+            "Lá em cima, não estique o braço 100% nem deixe o ombro subir junto."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-09681013",
+      "name": "Remada unilateral na polia",
+      "equipment": "cable",
+      "muscle": "Costas (dorsal)",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-single-arm-neutral-grip-row?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Use esta se a puxada incomodar o ombro.",
+            "Puxe o cotovelo rente ao corpo, sem passar muito da linha do tronco, e sem encolher o ombro."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-94755da4",
+      "name": "Supino na máquina com pegada neutra",
+      "equipment": "machine",
+      "muscle": "Peito e tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/neutral-chest-press?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Palmas viradas uma pra outra e cotovelos perto do corpo.",
+            "Na descida, os cotovelos não passam muito da linha do tronco."
+          ]
+        }
+      ],
+      "alternatives": ["ex-7d45142f", "ex-1e21745c"]
+    },
+    {
+      "id": "ex-7d45142f",
+      "name": "Supino com halteres, pegada neutra",
+      "equipment": "dumbbell",
+      "muscle": "Peito e tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-neutral-bench-press?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Palmas viradas uma pra outra e cotovelos perto do corpo.",
+            "Na descida, os cotovelos não passam muito da linha do tronco."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-1e21745c",
+      "name": "Supino com halteres no chão",
+      "equipment": "dumbbell",
+      "muscle": "Peito e tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-floor-press?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "tip",
+          "lines": ["O chão limita a descida, o que protege o ombro. Encoste os cotovelos de leve e suba."]
+        },
+        { "type": "shoulder", "lines": ["Palmas viradas uma pra outra e cotovelos perto do corpo."] }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-7eacf5a6",
+      "name": "Remada sentada na polia",
+      "equipment": "cable",
+      "muscle": "Costas",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-seated-cable-row?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Leve as escápulas pra trás e pra baixo, sem encolher os ombros.",
+            "No final, não leve os cotovelos muito pra trás do tronco."
+          ]
+        }
+      ],
+      "alternatives": ["ex-bfb490dd", "ex-a90a4b05"]
+    },
+    {
+      "id": "ex-bfb490dd",
+      "name": "Remada na máquina",
+      "equipment": "machine",
+      "muscle": "Costas",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-plate-loaded-row?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Leve as escápulas pra trás e pra baixo, sem encolher os ombros.",
+            "No final, não leve os cotovelos muito pra trás do tronco."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-a90a4b05",
+      "name": "Remada unilateral com halter",
+      "equipment": "dumbbell",
+      "muscle": "Costas",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-single-arm-row?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Leve as escápulas pra trás e pra baixo, sem encolher os ombros.",
+            "No final, não leve os cotovelos muito pra trás do tronco.",
+            "Se apoiar a mão no banco incomodar o ombro, use a máquina."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-6e447f7b",
+      "name": "Elevação lateral com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Ombro (lateral)",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-lateral-raise?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Braços um pouco à frente do corpo, não totalmente de lado.",
+            "Polegares levemente pra cima e só até a altura dos ombros. Carga leve."
+          ]
+        }
+      ],
+      "alternatives": ["ex-aa459024"]
+    },
+    {
+      "id": "ex-aa459024",
+      "name": "Elevação lateral na polia",
+      "equipment": "cable",
+      "muscle": "Ombro (lateral)",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-low-single-arm-lateral-raise?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Braços um pouco à frente do corpo, não totalmente de lado.",
+            "Polegares levemente pra cima e só até a altura dos ombros. Carga leve."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-787a17e8",
+      "name": "Face pull na polia",
+      "equipment": "cable",
+      "muscle": "Posterior do ombro e manguito",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-face-pulls?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Polia na altura do peito ou do queixo, com os cotovelos um pouco abaixo da linha dos ombros, mesmo que o vídeo mostre na linha do ombro.",
+            "Puxe abrindo a corda e girando as mãos pra trás. Carga leve.",
+            "Se pinçar, use o voador invertido."
+          ]
+        }
+      ],
+      "alternatives": ["ex-23714481", "ex-470bc8a8"]
+    },
+    {
+      "id": "ex-23714481",
+      "name": "Voador invertido na máquina",
+      "equipment": "machine",
+      "muscle": "Posterior do ombro e manguito",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-reverse-fly?model=f",
+      "videos": [],
+      "notes": [{ "type": "shoulder", "lines": ["Leve os braços só até a linha dos ombros. Carga leve."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-470bc8a8",
+      "name": "Crucifixo invertido no banco inclinado",
+      "equipment": "dumbbell",
+      "muscle": "Posterior do ombro e manguito",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-laying-reverse-fly?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": ["Peito apoiado no banco e cotovelos dobrados.", "Suba só até a altura dos ombros. Carga leve."]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-9f6f905f",
+      "name": "Tríceps na polia com corda",
+      "equipment": "cable",
+      "muscle": "Tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-rope-pushdown?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Cotovelos colados ao corpo."] }],
+      "alternatives": ["ex-99b95d42"]
+    },
+    {
+      "id": "ex-99b95d42",
+      "name": "Tríceps na polia com barra",
+      "equipment": "cable",
+      "muscle": "Tríceps",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-bar-pushdown?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Cotovelos colados ao corpo."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-b469a3c1",
+      "name": "Elevação pélvica na máquina",
+      "equipment": "machine",
+      "muscle": "Glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hip-thrust?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Segure 1 segundo lá em cima apertando o glúteo."] }],
+      "alternatives": ["ex-a2f7e394", "ex-153ee29b"]
+    },
+    {
+      "id": "ex-a2f7e394",
+      "name": "Elevação pélvica no Smith",
+      "equipment": "smith",
+      "muscle": "Glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-hip-thrust?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Use uma almofada na barra e segure 1 segundo lá em cima apertando o glúteo."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-153ee29b",
+      "name": "Elevação pélvica com halter",
+      "equipment": "dumbbell",
+      "muscle": "Glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-hip-thrust?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Segure o halter sobre o quadril e pause 1 segundo lá em cima."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-a6a56bdd",
+      "name": "Stiff com halteres",
+      "equipment": "dumbbell",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/dumbbell-romanian-deadlift?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Costas retas, peso rente às pernas e ombros encaixados pra trás. Não deixe o peso puxar os ombros pra frente."
+          ]
+        }
+      ],
+      "alternatives": ["ex-97dc6775", "ex-4fa50ef3"]
+    },
+    {
+      "id": "ex-97dc6775",
+      "name": "Stiff no Smith",
+      "equipment": "smith",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/smith-machine-romanian-deadlift?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Costas retas, peso rente às pernas e ombros encaixados pra trás. Não deixe o peso puxar os ombros pra frente."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-4fa50ef3",
+      "name": "Stiff na polia",
+      "equipment": "cable",
+      "muscle": "Posterior de coxa e glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-bar-romanian-deadlift?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": [
+            "Costas retas, peso rente às pernas e ombros encaixados pra trás. Não deixe o peso puxar os ombros pra frente."
+          ]
+        }
+      ],
+      "alternatives": []
+    },
+    {
+      "id": "ex-ce4f4128",
+      "name": "Cadeira flexora",
+      "equipment": "machine",
+      "muscle": "Posterior de coxa",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-seated-leg-curl?model=f",
+      "videos": [],
+      "notes": [],
+      "alternatives": ["ex-1197110c"]
+    },
+    {
+      "id": "ex-1197110c",
+      "name": "Mesa flexora (deitada)",
+      "equipment": "machine",
+      "muscle": "Posterior de coxa",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-hamstring-curl?model=f",
+      "videos": [],
+      "notes": [{ "type": "tip", "lines": ["Quadril colado no banco durante todo o movimento."] }],
+      "alternatives": []
+    },
+    {
+      "id": "ex-124629e0",
+      "name": "Coice na polia",
+      "equipment": "cable",
+      "muscle": "Glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/cable-standing-glute-kickback?model=f",
+      "videos": [],
+      "notes": [
+        {
+          "type": "shoulder",
+          "lines": ["Segure na máquina só pra equilíbrio, sem jogar o peso do corpo nos braços."]
+        }
+      ],
+      "alternatives": ["ex-207b692c"]
+    },
+    {
+      "id": "ex-207b692c",
+      "name": "Coice na máquina",
+      "equipment": "machine",
+      "muscle": "Glúteo",
+      "url": "https://musclewiki.com/pt-br/exercise/machine-glute-kickback?model=f",
+      "videos": [],
+      "notes": [{ "type": "shoulder", "lines": ["Apoie as mãos só pra equilíbrio, sem jogar o peso do corpo nos braços."] }],
+      "alternatives": []
+    }
+  ],
+  "guides": [
+    {
+      "id": "gui-c02ee1a7",
+      "title": "Cuidados com o ombro",
+      "subtitle": "Vale para os três treinos",
+      "painScale": { "min": 0, "max": 10, "okUpTo": 3, "minLabel": "Sem dor", "maxLabel": "Dor máxima" },
+      "rules": [
+        {
+          "level": "ok",
+          "title": "Até 3 de 10",
+          "text": "que passa logo depois da série e não piora no dia seguinte: pode continuar."
+        },
+        {
+          "level": "stop",
+          "title": "Pontada, dor forte ou piora no dia seguinte:",
+          "text": "pare e pule o exercício."
+        }
+      ],
+      "avoid": [
+        "Peso acima da cabeça (desenvolvimento)",
+        "Qualquer exercício atrás da nuca",
+        "Remada alta",
+        "Mergulho, no banco ou na paralela",
+        "Tríceps francês ou qualquer tríceps com o braço acima da cabeça",
+        "Crucifixo ou voador de peito abrindo muito os braços"
+      ]
+    }
+  ]
+}
+</script>
+<script src="../assets/app.js"></script>
+</body>
+</html>
