@@ -26,14 +26,12 @@ const NOTE_TYPES = ["shoulder", "tip"];
 /* Página inicial com a lista de programas (uma pasta acima). No GitHub Pages o link fica sem "index.html" */
 const HUB = /github\.io$/.test(location.hostname) ? "../" : "../index.html";
 
-/* Firefox no Android: a barra de endereço que some ao rolar faz a barra de abas pular, e o desfoque
-   deixa a rolagem travada (bugs conhecidos do Firefox). Nele a página rola dentro do body, então a
-   barra de endereço fica parada, e as barras ficam sólidas, sem desfoque. */
+/* Firefox no Android: o desfoque das barras deixa a rolagem travada (bug conhecido do Firefox),
+   então nele as barras ficam sólidas, sem desfoque. */
 const FF_ANDROID = /Android/i.test(navigator.userAgent) && /Firefox\//.test(navigator.userAgent);
 if (FF_ANDROID) document.documentElement.classList.add("ff-android");
-const scroller = FF_ANDROID ? document.body : null;
-const getScroll = () => scroller ? scroller.scrollTop : window.scrollY;
-const setScroll = y => { if (scroller) scroller.scrollTop = y; else window.scrollTo(0, y); };
+const getScroll = () => window.scrollY;
+const setScroll = y => window.scrollTo(0, y);
 
 /* Armazenamento local (só neste aparelho) */
 const store = {
@@ -626,7 +624,7 @@ document.addEventListener("click", ev => {
 });
 document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !sheet.hidden) closeSheet(); });
 let navFrame = 0;
-(scroller || window).addEventListener("scroll", () => {
+window.addEventListener("scroll", () => {
   if (!navFrame) navFrame = requestAnimationFrame(() => { navFrame = 0; updateNav(); });
 }, { passive: true });
 load();
