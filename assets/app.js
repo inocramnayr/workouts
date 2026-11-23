@@ -295,9 +295,11 @@ function nav(title, backHref, backLabel) {
     '<span class="nav-title">' + esc(title) + '</span><span></span></header>';
 }
 
-function setsLine(it) {
-  return plural(it.sets, "série", "séries") + " · " + it.reps + " reps" + (it.per ? " " + it.per : "");
-}
+/* Textos de séries: "8–12" vira "8 a 12" */
+const range = r => String(r).replace(/\s*[–-]\s*/, " a ");
+const setsText = it => plural(it.sets, "série", "séries") + " de " + range(it.reps);  // título: "4 séries de 8 a 12"
+const listText = it => setsText(it) + (it.per ? " " + it.per : "");                   // lista do treino: "3 séries de 8 a 12 por perna"
+const rowText = it => range(it.reps) + (it.per ? " " + it.per : "");                  // cada linha: "8 a 12 por perna"
 
 function exCell(it) {
   const ex = D.exById[it.exercise];
@@ -306,14 +308,14 @@ function exCell(it) {
   return '<a class="cell" href="#' + it.id + '">' +
     '<span class="thumb">' + exIcon(ex) + (full ? '<span class="badge">' + G.check + '</span>' : '') + '</span>' +
     '<span class="cell-main"><span class="cell-title">' + esc(ex.name) + '</span>' +
-    '<span class="cell-sub">' + esc(setsLine(it)) + (d > 0 && !full ? ' · <span class="prog">' + d + ' de ' + it.sets + '</span>' : '') + '</span></span>' +
+    '<span class="cell-sub">' + esc(listText(it)) + (d > 0 && !full ? ' · <span class="prog">' + d + ' de ' + it.sets + '</span>' : '') + '</span></span>' +
     '<span class="chev">' + G.chev + '</span></a>';
 }
 
 function beforeCell(b) {
   const href = b.type === "guide" ? b.guide : b.id;
   const done = b.type === "warmup" && doneCount(b.id, b.sets) === b.sets;
-  const sub = b.subtitle || (b.type === "warmup" ? setsLine(b) : "");
+  const sub = b.subtitle || (b.type === "warmup" ? listText(b) : "");
   return '<a class="cell" href="#' + href + '"><span class="thumb orange">' + (BEFORE_ICON[b.icon] || (b.type === "guide" ? G.warnLine : G.flame)) +
       (done ? '<span class="badge">' + G.check + '</span>' : '') + '</span>' +
     '<span class="cell-main"><span class="cell-title">' + esc(b.title) + '</span>' + (sub ? '<span class="cell-sub">' + esc(sub) + '</span>' : '') + '</span>' +
@@ -450,6 +452,12 @@ function optionCell(href, ex, sub) {
     '<span class="chev">' + G.chev + '</span></a>';
 }
 
+/* Texto da última linha das séries: "Desmarcar todas" quando todas estão marcadas */
+function allLabel(n, d) {
+  for (let k = 0; k < n; k++) if (!d[k]) return "Marcar todas";
+  return "Desmarcar todas";
+}
+
 /* Tela de um item do treino (exercício principal) ou de uma alternativa dele (altId) */
 function detailHTML(ref, altId) {
   const { item, workout: wk, warm } = ref;
@@ -461,7 +469,8 @@ function detailHTML(ref, altId) {
   const sets = Array.from({ length: item.sets }, (_, k) =>
     '<button class="set" type="button" data-set="' + k + '" aria-pressed="' + !!d[k] + '">' +
       '<span class="circle">' + G.check + '</span><span>Série ' + (k + 1) + '</span>' +
-      '<span class="set-detail">' + esc(item.reps) + ' reps</span></button>').join("");
+      '<span class="set-detail">' + esc(rowText(item)) + '</span></button>').join("") +
+    '<button class="set-all" type="button" data-all>' + allLabel(item.sets, d) + '</button>';
 
   let options = "";
   if (!alt && main.alternatives.length) {
@@ -486,18 +495,14 @@ function detailHTML(ref, altId) {
   const foot = alt
     ? 'As séries marcadas aqui contam para ' + esc(warm ? item.title : main.name) + ' na lista.'
     : (item.sets === 1 ? 'Toque na série quando terminar.' : 'Toque em cada série quando terminar.');
-  const label = item.sets === 1 ? "Série" : "Séries";
 
   return (
     back +
     '<div class="lt"><h1 class="large-title t2">' + esc(ex.name) + '</h1>' + (sub ? '<p class="lt-sub">' + esc(sub) + '</p>' : '') + '</div>' +
     '<div class="spacer" style="height:8px"></div>' +
     videoHTML(ex, jump) +
-    '<div class="spacer"></div>' +
-    '<div class="group stats"><div class="stat"><span class="s-l">' + label + '</span><span class="s-v">' + item.sets + '</span></div>' +
-      '<div class="stat"><span class="s-l">Repetições' + (item.per ? ' ' + esc(item.per) : '') + '</span><span class="s-v">' + esc(item.reps) + '</span></div></div>' +
     notesHTML(mergeNotes(ex.notes, item.notes)) +
-    '<p class="g-head">' + label + '</p><div class="group" id="sets">' + sets + '</div>' +
+    '<p class="g-head">' + esc(setsText(item)) + '</p><div class="group" id="sets">' + sets + '</div>' +
     '<p class="g-foot">' + foot + '</p>' +
     options +
     '<div class="spacer"></div>'
@@ -620,6 +625,18 @@ document.addEventListener("click", ev => {
     d[k] = !d[k];
     store.set(sk(id), d);
     setBtn.setAttribute("aria-pressed", !!d[k]);
+    const all = detailView.querySelector("[data-all]");
+    if (all) all.textContent = allLabel(D.itemById[id].item.sets, d);
+    return;
+  }
+  const allBtn = ev.target.closest("[data-all]");
+  if (allBtn && detailView.dataset.item) {
+    const id = detailView.dataset.item, n = D.itemById[id].item.sets;
+    const mark = allLabel(n, store.get(sk(id), [])) === "Marcar todas";
+    const d = Array.from({ length: n }, () => mark);
+    store.set(sk(id), d);
+    detailView.querySelectorAll("[data-set]").forEach(b => b.setAttribute("aria-pressed", mark));
+    allBtn.textContent = allLabel(n, d);
     return;
   }
   if (ev.target.closest("[data-jump]")) {

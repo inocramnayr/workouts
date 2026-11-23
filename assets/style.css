@@ -219,7 +219,7 @@ button { font: inherit; color: inherit; letter-spacing: inherit; }
   place-items: center;
   box-shadow: 0 8px 24px rgba(0, 122, 255, 0.28);
 }
-.play svg { width: 24px; height: 24px; margin-left: 3px; }
+.play svg { width: 24px; height: 24px; }
 .video:active .play { transform: scale(.96); }
 .video-row {
   display: flex;
@@ -251,12 +251,6 @@ button.video-row { appearance: none; border: 0; background: transparent; width: 
 .dots span { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); transition: background-color .2s ease; }
 .dots span.on { background: #FFFFFF; }
 a.video-media { display: grid; }
-
-.stats { display: grid; grid-template-columns: 1fr 1fr; }
-.stat { padding: 12px 16px; display: grid; gap: 2px; }
-.stat + .stat { border-left: 0.5px solid var(--sep); }
-.s-l { font-size: 13px; line-height: 18px; letter-spacing: -0.08px; color: var(--secondary); }
-.s-v { font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: 0.35px; font-variant-numeric: tabular-nums; }
 
 .note { padding: 12px 16px 13px; position: relative; }
 .note + .note::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; border-top: 0.5px solid var(--sep); }
@@ -302,6 +296,11 @@ a.video-media { display: grid; }
 .circle svg { width: 13px; height: 13px; }
 .set[aria-pressed="true"] .circle { background: var(--blue); border-color: var(--blue); color: #FFFFFF; }
 .set-detail { color: var(--secondary); font-variant-numeric: tabular-nums; }
+.set-all { display: flex; align-items: center; width: 100%; appearance: none; border: 0; background: none;
+  min-height: 44px; padding: 11px 16px; color: var(--blue); font-size: 17px; letter-spacing: -0.4px;
+  text-align: left; position: relative; cursor: pointer; }
+.set-all::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; border-top: 0.5px solid var(--sep); }
+.set-all:active { background: var(--press); }
 
 /* Escala de dor */
 .scale { padding: 14px 16px; }
