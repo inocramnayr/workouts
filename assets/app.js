@@ -396,14 +396,6 @@ function notesHTML(notes) {
     '</div>').join("") + '</div>';
 }
 
-function fallbackMedia(url, name) {
-  return '<a class="video-media" href="' + esc(url) + '" target="_blank" rel="noopener" aria-label="Ver vídeo de ' + esc(name) + '"><span class="play">' + G.play + '</span></a>';
-}
-
-function siteName(url) {
-  try { return /(^|\.)musclewiki\.com$/.test(new URL(url).hostname) ? "MuscleWiki" : "site"; } catch (e) { return "site"; }
-}
-
 function videoHTML(ex, jump) {
   const vids = ex.videos.slice(0, 4);
   const url = ex.url;
@@ -412,14 +404,14 @@ function videoHTML(ex, jump) {
     ? '<div class="carousel" data-url="' + esc(url) + '" data-name="' + esc(ex.name) + '"><div class="slides">' +
         vids.map(v => '<div class="slide"><video src="' + esc(v) + '" muted loop playsinline preload="metadata" aria-label="Vídeo de ' + esc(ex.name) + '"></video></div>').join("") +
       '</div>' + (vids.length > 1 ? '<div class="dots">' + vids.map((_, k) => '<span' + (k ? '' : ' class="on"') + '></span>').join("") + '</div>' : '') + '</div>'
-    : fallbackMedia(url, ex.name);
+    : '';
   return '<div class="group video">' + media +
-    (url ? '<a class="video-row" href="' + esc(url) + '" target="_blank" rel="noopener"><span>' + (vids.length ? 'Abrir no ' + siteName(url) : 'Ver vídeo') + '</span><span class="ext">' + G.ext + '</span></a>' : '') +
+    (url ? '<a class="video-row" href="' + esc(url) + '" target="_blank" rel="noopener"><span>Como fazer</span><span class="ext">' + G.ext + '</span></a>' : '') +
     (jump || '') +
   '</div>';
 }
 
-/* Toca só o vídeo visível; se nenhum carregar, volta para o botão */
+/* Toca só o vídeo visível; se nenhum carregar, tira o carrossel */
 let carouselIO = null;
 function initCarousel() {
   if (carouselIO) { carouselIO.disconnect(); carouselIO = null; }
@@ -428,8 +420,7 @@ function initCarousel() {
   const slides = car.querySelector(".slides");
   const fallback = () => {
     if (!car.isConnected) return;
-    if (car.dataset.url) car.outerHTML = fallbackMedia(car.dataset.url, car.dataset.name);
-    else car.remove();
+    car.remove();
   };
   const drop = v => {
     const slide = v.closest(".slide");
@@ -463,7 +454,7 @@ function initCarousel() {
 document.addEventListener("securitypolicyviolation", e => {
   if ((e.effectiveDirective || e.violatedDirective || "").indexOf("media-src") === 0) {
     const car = detailView.querySelector(".carousel");
-    if (car) { if (car.dataset.url) car.outerHTML = fallbackMedia(car.dataset.url, car.dataset.name); else car.remove(); }
+    if (car) car.remove();
   }
 });
 
