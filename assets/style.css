@@ -302,6 +302,12 @@ a.video-media { display: grid; }
 .set-all::before { content: ""; position: absolute; top: 0; left: 16px; right: 0; border-top: 0.5px solid var(--sep); }
 .set-all:active { background: var(--press); }
 
+/* Peso usado */
+.w-row { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 0 16px; font-size: 17px; letter-spacing: -0.4px; }
+.w-val { display: flex; align-items: baseline; gap: 4px; }
+.w-input { width: 72px; border: 0; background: none; text-align: right; font: inherit; font-size: 17px; color: var(--blue); padding: 11px 0; outline: none; }
+.w-unit { color: var(--secondary); }
+
 /* Escala de dor */
 .scale { padding: 14px 16px; }
 .scale-bar { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; }

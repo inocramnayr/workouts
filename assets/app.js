@@ -60,6 +60,27 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 const doneCount = (id, n) => { const d = store.get(sk(id), []); let c = 0; for (let k = 0; k < n; k++) if (d[k]) c++; return c; };
 const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
 
+/* Peso usado: um por item e por exercício (o principal, cada alternativa e o aquecimento têm cargas diferentes).
+   Fica fora das chaves das séries, então "Zerar séries deste treino" não apaga. */
+const weightKey = (itemId, exId) => sk("peso:" + itemId + ":" + exId);
+const validWeight = n => typeof n === "number" && Number.isFinite(n) && n >= 0 && n <= 999;
+const fmtWeight = n => validWeight(n) ? String(Math.round(n * 10) / 10).replace(".", ",") : "";
+/* "42,5" ou "42.5" vira 42.5; vazio vira null; texto inválido vira undefined */
+function parseWeight(s) {
+  const t = String(s).trim().replace(",", ".");
+  if (!t) return null;
+  if (!/^\d{0,3}(\.\d?)?$/.test(t) || !/\d/.test(t)) return undefined;
+  const n = Number(t);
+  return validWeight(n) ? n : undefined;
+}
+function saveWeight(input) {
+  const key = weightKey(input.dataset.item, input.dataset.ex);
+  const n = parseWeight(input.value);
+  if (n === null) store.del(key);
+  else if (n !== undefined) store.set(key, n);
+  input.value = fmtWeight(store.get(key, null));   // inválido: volta para o peso salvo
+}
+
 /* ============================================================
    Leitura e conferência do treino.json
    ============================================================ */
@@ -497,12 +518,20 @@ function detailHTML(ref, altId) {
     ? 'As séries marcadas aqui contam para ' + esc(warm ? item.title : main.name) + ' na lista.'
     : (item.sets === 1 ? 'Toque na série quando terminar.' : 'Toque em cada série quando terminar.');
 
+  const weight = ex.equipment === "bodyweight" ? "" :
+    '<p class="g-head">Peso</p><div class="group"><label class="w-row"><span>Peso usado</span>' +
+      '<span class="w-val"><input class="w-input" type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" maxlength="5" placeholder="0"' +
+        ' aria-label="Peso usado em kg" data-weight data-item="' + esc(item.id) + '" data-ex="' + esc(ex.id) + '"' +
+        ' value="' + esc(fmtWeight(store.get(weightKey(item.id, ex.id), null))) + '">' +
+      '<span class="w-unit">kg</span></span></label></div>';
+
   return (
     back +
     '<div class="lt"><h1 class="large-title t2">' + esc(ex.name) + '</h1>' + (sub ? '<p class="lt-sub">' + esc(sub) + '</p>' : '') + '</div>' +
     '<div class="spacer" style="height:8px"></div>' +
     videoHTML(ex, jump) +
     notesHTML(mergeNotes(ex.notes, item.notes)) +
+    weight +
     '<p class="g-head">' + esc(setsText(item)) + '</p><div class="group" id="sets">' + sets + '</div>' +
     '<p class="g-foot">' + foot + '</p>' +
     options +
@@ -586,6 +615,9 @@ function render(view, key, level, html) {
 function route() {
   if (!D) return;
   if (shown && shown !== "detail") listScroll[shown] = getScroll();
+  /* Saiu da tela com o campo de peso ainda em foco (ex.: gesto de voltar): salva antes de trocar a tela */
+  const act = document.activeElement;
+  if (act && act.matches && act.matches("[data-weight]")) saveWeight(act);
   const h = (location.hash || "").slice(1);
   const im = h.match(/^(it-[A-Za-z0-9]+)(?:-(ex-[A-Za-z0-9]+))?$/);
   const ref = im && D.itemById[im[1]];
@@ -660,7 +692,14 @@ document.addEventListener("click", ev => {
     } else closeSheet();
   }
 });
-document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !sheet.hidden) closeSheet(); });
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && !sheet.hidden) closeSheet();
+  /* Enter no campo de peso: tira o foco (fecha o teclado); o focusout salva */
+  if (ev.key === "Enter" && ev.target.matches && ev.target.matches("[data-weight]")) { ev.preventDefault(); ev.target.blur(); }
+});
+document.addEventListener("focusout", ev => {
+  if (ev.target.matches && ev.target.matches("[data-weight]") && ev.target.isConnected) saveWeight(ev.target);
+});
 let navFrame = 0;
 window.addEventListener("scroll", () => {
   if (!navFrame) navFrame = requestAnimationFrame(() => { navFrame = 0; updateNav(); });
